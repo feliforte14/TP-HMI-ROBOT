@@ -4,7 +4,7 @@
 
 Trabajo práctico grupal de Desarrollo de Aplicaciones I (UADE, Facultad de Ingeniería y Cs. Exactas): interfaz HMI/HRI para un robot de servicio, con prototipo en Figma y una app Android que funciona con un robot simulado.
 
-> **Estado:** diseño propuesto (preentrega). No hay todavía código, pruebas ejecutadas ni integración con un robot real. El diseño completo está en [`docs/preentrega.md`](docs/preentrega.md).
+> **Estado:** diseño propuesto (preentrega). Hay una primera demo de telemetría ROS 2 en `simulator/rondago_sim.py`. La app, el gateway y la integración con un robot real siguen pendientes. El diseño completo está en [`docs/preentrega.md`](docs/preentrega.md).
 
 ## El problema
 
@@ -34,7 +34,7 @@ Una app Android para que un operador supervise una ronda robótica del Go2: ve e
 - **Sin cola offline de órdenes:** sin enlace o con datos vencidos, las órdenes se bloquean. El historial recibido sí queda disponible localmente.
 - **La detención desde la app es un comando de software simulado:** no reemplaza una parada física de emergencia.
 - **Modo simulado siempre rotulado** como SIMULACIÓN. Las funciones no disponibles se deshabilitan con explicación.
-- **ROS2 y DDS solo como referencia de diseño**, no como dependencia del APK. El contrato de mensajes es propio y no es el protocolo oficial de Unitree.
+- **ROS 2 y DDS forman parte de la implementación del simulador**. Para esta demo se selecciona Fast DDS; la integración Android sigue pendiente. El contrato de mensajes es propio y no es el protocolo oficial de Unitree.
 
 ## Arquitectura
 
@@ -79,4 +79,40 @@ Son propuestas visuales estáticas con datos sintéticos, no el prototipo nativo
 
 ## Cómo ejecutarlo
 
-Pendiente: se completará cuando exista código (requisitos de ejecución, configuración de red, modo simulado y datos de prueba). No se guardan credenciales en el repositorio.
+### Demo inicial de telemetría simulada
+
+Requisitos: Ubuntu 24.04 (también en WSL 2), ROS 2 Jazzy Desktop y Git. No requiere robot ni Android. Es una demo de datos, sin simulación física, órdenes o alertas.
+
+Si todavía no tenés el repositorio, ejecutá en Ubuntu:
+
+```bash
+cd ~
+git clone https://github.com/feliforte14/TP-HMI-ROBOT.git
+cd TP-HMI-ROBOT
+```
+
+Si ya lo tenés, entrá a su carpeta y ejecutá `git pull --ff-only`.
+
+En esa carpeta:
+
+```bash
+source /opt/ros/jazzy/setup.bash
+export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+python3 simulator/rondago_sim.py
+```
+
+En otra terminal de Ubuntu:
+
+```bash
+source /opt/ros/jazzy/setup.bash
+export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+ros2 topic echo /rondago/sim/state
+```
+
+Se espera un mensaje por segundo con `source: SIMULATION`, batería, sector y progreso. El contenido es JSON dentro de `std_msgs/msg/String`; es un contrato provisional, no el protocolo de Unitree.
+
+La ronda inicia automáticamente: base, recepción, pasillo A, pasillo B, portón de carga y base. Cada etapa dura cinco publicaciones. Aproximadamente a los 26 segundos aparece `COMPLETED` y 4 puntos verificados; el nodo sigue publicando el estado final. Reiniciar el programa crea una ronda nueva. Detener con Ctrl+C en ambas terminales.
+
+Validación del código: sintaxis y progresión de estados verificadas de forma aislada. La ejecución de este simulador con ROS 2 y su recepción por DDS deben comprobarse en el Ubuntu del equipo; no se presentan como pruebas ya realizadas. La preentrega y sus diagramas describen un diseño anterior y deben actualizarse conforme avance la integración.
+
+No se guardan credenciales en el repositorio.
