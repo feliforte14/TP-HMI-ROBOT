@@ -1,3 +1,5 @@
+> **Documento histórico de diseño.** La implementación actual usa ROS 2 y DDS de forma efectiva entre gateway y controlador simulado, y añade demo autónoma en Android. Consultar [IMPLEMENTACION.md](IMPLEMENTACION.md) y el [README](../README.md) para el alcance vigente. Las afirmaciones anteriores de “solo referencia” y “sin código” no describen el estado actual.
+
 # RondaGo
 
 **Supervisión móvil de patrullaje nocturno en depósitos logísticos**
