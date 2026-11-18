@@ -208,6 +208,10 @@ class Engine:
                         d["sector"] = ROUTE[d["verified"]]
                         d["battery"] = max(0, d["battery"] - 1)
                     changed = True
+            if d["battery"] < 20 and d["status"] == "PATROLLING":
+                self.event("BATTERY", "Batería baja simulada: solicitar regreso")
+                d["status"] = "PAUSED"
+                changed = True
             if changed:
                 d["version"] += 1
             self.save()

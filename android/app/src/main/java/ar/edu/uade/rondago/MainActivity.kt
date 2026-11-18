@@ -14,6 +14,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -102,7 +103,7 @@ fun Panel(title: String, content: @Composable ColumnScope.() -> Unit) {
 @Composable
 fun Dashboard(u: UiState, enabled: Boolean, send: (String, String) -> Unit, cut: (Boolean) -> Unit) {
     val s = u.state
-    LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    LazyColumn(Modifier.fillMaxSize().testTag("dashboard"), contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         item {
             Panel("Supervisión de ronda") {
                 if (s == null) Text("Sin datos. Usá la demo local o conectá el gateway.") else {

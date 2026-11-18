@@ -21,6 +21,7 @@ class SimulatorTest {
         s.command("d", "RETURN"); repeat(5) { s.tick() }; s.command("e", "DEMO_RECHARGE")
         assertEquals("EXECUTED", s.command("f", "START").status)
     }
+    @Test fun batteryDrainPausesRound() { val s = LocalSimulator(State(battery = 20.0)); s.command("a", "START"); repeat(5) { s.tick() }; assertEquals("PAUSED", s.state.status); assertTrue(s.state.events.any { it.type == "BATTERY" }) }
     @Test fun staleVersionRejected() { val s = LocalSimulator(); s.command("a", "START"); assertEquals("REJECTED", s.command("b", "PAUSE", expectedVersion = 0).status) }
     @Test fun noiseRequiresDurationAndRecovery() {
         var t = 1000.0; val s = LocalSimulator(clock = { t }); s.command("a", "DEMO_NOISE")

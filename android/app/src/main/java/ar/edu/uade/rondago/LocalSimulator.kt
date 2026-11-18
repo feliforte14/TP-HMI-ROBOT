@@ -87,6 +87,7 @@ class LocalSimulator(initial: State = State(), private val clock: () -> Double =
                 }
             }
         }
+        if (state.battery < 20 && state.status == "PATROLLING") { alert("BATTERY", "Batería baja: solicitar regreso"); state = state.copy(status = "PAUSED") }
         if (state != before) state = state.copy(version = state.version + 1)
         state = state.copy(observedAt = t, receivedAt = t, fresh = true, rounds = state.rounds.map { if (it.id == state.roundId) it.copy(status = state.status, verified = state.verified) else it })
         return state

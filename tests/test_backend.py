@@ -81,6 +81,12 @@ class EngineTests(unittest.TestCase):
         self.assertEqual(self.e.data["status"], "RETURNED")
         self.send("DEMO_RECHARGE")
         self.assertEqual(self.send("START")["status"], "EXECUTED")
+    def test_battery_drain_also_pauses(self):
+        self.e.data["battery"] = 20
+        self.send("START"); self.ticks(5)
+        self.assertEqual(self.e.data["status"], "PAUSED")
+        self.assertTrue(self.e.unresolved("BATTERY"))
+
     def test_idempotence(self):
         c = dict(id="same", action="START", expectedVersion=0, expiresAt=self.clock()+3)
         a = self.e.command(c)
@@ -128,6 +134,17 @@ class GatewayTests(unittest.TestCase):
         with self.assertRaises(ValueError): self.g.submit(self.order("c2"))
         self.e.command(self.sent[0]); self.g.receive(self.e.snapshot())
         self.assertEqual(self.g.get_command("c1")["status"], "REJECTED")  # TTL vencido
+    def test_reconcile_recovers_lost_result_without_reexecution(self):
+        self.g.submit(self.order())
+        self.e.command(self.sent[0])
+        self.clock.advance(2)
+        self.g.reconcile()
+        self.assertEqual(len(self.sent), 2)
+        self.assertEqual(self.sent[0]["expiresAt"], self.sent[1]["expiresAt"])
+        self.e.command(self.sent[1]); self.g.receive(self.e.snapshot())
+        self.assertEqual(len(self.e.data["rounds"]), 1)
+        self.assertEqual(self.g.get_command("c1")["status"], "EXECUTED")
+
     def test_second_operator_and_expired_session(self):
         with self.assertRaises(ValueError): self.g.acquire("operator-b")
         c = self.order(); c["sessionId"] = "invalid"

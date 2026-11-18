@@ -67,12 +67,15 @@ jobs:
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
+      - name: Gateway HTTP para prueba desde Android
+        run: |
+          RONDAGO_TOKEN=integration-ci-only-123456 python3 -m backend.gateway --demo --host 0.0.0.0 > /tmp/rondago-http.log 2>&1 &
       - uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
           arch: x86_64
           disable-animations: true
-          script: cd android && gradle connectedDebugAndroidTest --no-daemon
+          script: cd android && gradle connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.gatewayToken=integration-ci-only-123456 --no-daemon
       - uses: actions/upload-artifact@v4
         if: always()
         with:
