@@ -4,6 +4,14 @@ Aplicación Android para supervisar **rondas simuladas** en un depósito logíst
 
 Incluye app Kotlin/Compose, ViewModel/StateFlow, Room, Retrofit, DataStore, controlador Python, gateway HTTP y comunicación **ROS 2 Jazzy con Fast DDS**. No requiere un Go2 para la demostración. No controla hardware real.
 
+## Versión verificada
+
+Código validado: [`3fd9dad`](https://github.com/feliforte14/TP-HMI-ROBOT/commit/3fd9dadcd8ab6534f1478fe025fc5ef62f7a5239), 18 de noviembre de 2026.
+
+**[Ver pruebas y descargar APK](https://github.com/feliforte14/TP-HMI-ROBOT/actions/runs/44384429382)** → sección **Artifacts** → **RondaGo-debug-apk**. Descomprimir el ZIP para obtener `app-debug.apk`. Los artefactos de esta ejecución vencen el 16 de febrero de 2027; el código y el workflow permiten volver a generarlos.
+
+Resultado: 24 pruebas Python aprobadas, integración real ROS 2/Fast DDS aprobada, APK compilado, 7 pruebas unitarias Kotlin aprobadas, Lint sin errores y 3 pruebas instrumentadas aprobadas en emulador Android 10. Ver [alcance exacto de las pruebas](docs/VALIDACION.md).
+
 ## Elegir cómo ejecutarlo
 
 | Modo | Requisitos | Comunicación | Uso |
