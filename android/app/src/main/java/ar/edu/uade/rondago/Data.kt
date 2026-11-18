@@ -10,7 +10,10 @@ import kotlinx.coroutines.flow.first
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.*
+import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.Body
+import retrofit2.http.Path
 import java.util.concurrent.TimeUnit
 
 @Entity(tableName = "records", primaryKeys = ["scope", "kind", "id"])
@@ -29,7 +32,7 @@ interface Api {
     @POST("v1/control-session") suspend fun session(@Body body: Map<String, String>): Session
     @POST("v1/commands") suspend fun command(@Body order: Order): Command
     @GET("v1/commands/{id}") suspend fun result(@Path("id") id: String): Command
-    @GET("v1/events") suspend fun events(@Query("after") cursor: Long): EventPage
+    @GET("v1/events") suspend fun events(@retrofit2.http.Query("after") cursor: Long): EventPage
 }
 private val Context.settings by preferencesDataStore("rondago_settings")
 class Repository(context: Context) {
